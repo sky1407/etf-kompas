@@ -13,6 +13,7 @@ type Props = {
   years: number;
   variant: Variant;
   utm: Utm;
+  emailEnabled: boolean;
   onSuccess: (result: { emailed: boolean }) => void;
 };
 
@@ -29,7 +30,7 @@ const PREVIEW = [
   "Daně v ČR na jedné stránce: časový test a limit 100 000 Kč",
 ];
 
-export function LeadGate({ usTicker, twinTicker, twinTerPct, monthly, years, variant, utm, onSuccess }: Props) {
+export function LeadGate({ usTicker, twinTicker, twinTerPct, monthly, years, variant, utm, emailEnabled, onSuccess }: Props) {
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "error">("idle");
@@ -117,7 +118,7 @@ export function LeadGate({ usTicker, twinTicker, twinTerPct, monthly, years, var
 
       <form onSubmit={submit} className="relative bg-white p-5 text-ink sm:p-7" noValidate>
         <label htmlFor="email" className="text-sm font-semibold">
-          Kam vám pošleme kopii?
+          {emailEnabled ? "Kam vám pošleme kopii?" : "Váš e-mail"}
         </label>
         <div className="mt-2 flex flex-col gap-2 sm:flex-row">
           <input
@@ -161,7 +162,8 @@ export function LeadGate({ usTicker, twinTicker, twinTerPct, monthly, years, var
           </p>
         )}
         <p id="lead-note" className="mt-3 text-xs leading-relaxed text-muted">
-          Plán uvidíte hned, kopii pošleme e-mailem. Občas pošleme tip k ETF, odhlásíte se jedním klikem.{" "}
+          {emailEnabled ? "Plán uvidíte hned, kopii pošleme e-mailem." : "Plán uvidíte hned na této stránce."} Občas
+          pošleme tip k ETF, odhlásit se můžete kdykoli.{" "}
           <a href="/soukromi" className="underline underline-offset-2">
             Zpracování údajů
           </a>

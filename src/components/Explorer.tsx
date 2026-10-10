@@ -9,9 +9,9 @@ import { LeadGate } from "./LeadGate";
 import { PlanReport } from "./PlanReport";
 import { TwinCard } from "./TwinCard";
 
-type Props = { variant: Variant; utm: Utm };
+type Props = { variant: Variant; utm: Utm; emailEnabled: boolean };
 
-export function Explorer({ variant, utm }: Props) {
+export function Explorer({ variant, utm, emailEnabled }: Props) {
   const [ticker, setTicker] = useState(usEtfs[0].ticker);
   const [monthly, setMonthly] = useState(3000);
   const [years, setYears] = useState(20);
@@ -120,6 +120,7 @@ export function Explorer({ variant, utm }: Props) {
             years={years}
             variant={variant}
             utm={utm}
+            emailEnabled={emailEnabled}
             onSuccess={(result) => {
               setLead(result);
               window.requestAnimationFrame(() =>

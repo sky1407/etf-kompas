@@ -58,6 +58,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
   const variant = resolveVariant(params.ad);
   const utm = pickUtm(params);
   const copy = hero[variant];
+  const emailEnabled = Boolean(process.env.RESEND_API_KEY && process.env.RESEND_FROM);
 
   return (
     <main className="mx-auto max-w-2xl px-4 pb-24 pt-5 sm:px-6 sm:pt-10">
@@ -74,7 +75,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           {copy.title}
         </h1>
         <p className="mt-4 text-lg leading-snug text-ink/80">{copy.lead}</p>
-        <Explorer variant={variant} utm={utm} />
+        <Explorer variant={variant} utm={utm} emailEnabled={emailEnabled} />
       </section>
 
       <section className="mt-14">
