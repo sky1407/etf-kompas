@@ -1,5 +1,7 @@
 # ETF Kompas – lead-gen landing page
 
+[![CI](https://github.com/sky1407/etf-kompas/actions/workflows/ci.yml/badge.svg)](https://github.com/sky1407/etf-kompas/actions/workflows/ci.yml)
+
 **Live:** https://etf-kompas.vercel.app · ad A: [`/?ad=fees`](https://etf-kompas.vercel.app/?ad=fees) · ad B: [`/?ad=voo`](https://etf-kompas.vercel.app/?ad=voo)
 **Ads:** [`ads/`](ads/) (two creatives + copy) · **AI log:** [`ai-log/`](ai-log/)
 
@@ -119,11 +121,25 @@ vercel env pull .env.local    # DATABASE_URL, IP_HASH_SALT, NEXT_PUBLIC_POSTHOG_
 npm run db:migrate            # creates the leads table (db/schema.sql)
 npm run dev
 npm test && npm run lint && npm run build
+npx playwright install chromium && npm run test:e2e   # API + browser tests, see section 11
 ```
 
 **Lead API** (`POST /api/lead`): body size cap, zod validation (email, whitelisted ticker, numeric ranges, UTM length), honeypot, per-IP rate limit (5 / 10 min, IP stored only as a salted SHA-256 hash), upsert on email, parameterized SQL. Security headers are set in `next.config.ts`. The page is `noindex` because it's an ad landing page (Lighthouse SEO 60 for that reason only; performance 98, accessibility 96 → contrast fixed afterwards, best practices 100).
 
-## 11. Decisions on unclear points
+## 11. Testing
+
+| Layer | Command | What it checks |
+|---|---|---|
+| Unit | `npm test` | Fee projection model ([`tests/projection.test.ts`](tests/projection.test.ts)): zero-return identity, invalid input, reference value 283 000 CZK. |
+| Static | `npx tsc --noEmit`, `npm run lint`, `npm run build` | Types, ESLint, production build. Run in [CI](.github/workflows/ci.yml) on every push. |
+| API | `npm run test:e2e` → [`tests/e2e/api.spec.ts`](tests/e2e/api.spec.ts) | Valid lead stored; same email in different case updates **one** row and keeps first-touch UTM; IP stored only as a 64-char hash; rejects invalid email, SQL-injection string, ticker outside whitelist, out-of-range amount, unknown UTM key, malformed JSON (400) and oversize body (413); honeypot returns 200 but stores nothing; 6th request from one IP in 10 min gets 429. |
+| Browser | `npm run test:e2e` → [`tests/e2e/landing.spec.ts`](tests/e2e/landing.spec.ts) | 390×844 mobile viewport, Chromium: hero matches each ad; all 6 NYSE funds map to the right UCITS counterpart; full funnel (fund → calculator = exact model value → empty-email error → submit → plan with ISIN and tax rules); no horizontal scroll; sticky CTA hidden after conversion; zero console errors; privacy page. |
+
+The E2E suite starts the app itself (or reuses a running one on `:3000`; `E2E_BASE_URL` points it at a deployment), needs `DATABASE_URL` for the DB assertions, and deletes every `e2e-test*` lead afterwards. It is not run in CI because it writes to the real database. Last local run: **16 passed**. To prove the tests can fail, the expected calculator value was changed once to `1638101Kč` – the run failed with `Received: "1638100Kč"` – and reverted.
+
+Analytics delivery was checked separately: posthog-js drops `HeadlessChrome` traffic, so a run with a mobile Safari user agent confirmed that `/e/` batches reach `eu.i.posthog.com`. Lighthouse (mobile) was run against production.
+
+## 12. Decisions on unclear points
 
 - **"NYSE ETFs" for a Czech investor** – taken literally, a comparison of NYSE ETFs would recommend products the visitor can't buy. I kept NYSE funds as the *entry point* (that's what people search for) and made their EU-buyable counterparts the answer. This turns the brief's constraint into the page's hook.
 - **Language** – the page and ads are in Czech (target group); README and code in English for the reviewer and GitHub.
@@ -131,7 +147,7 @@ npm test && npm run lint && npm run build
 - **Lead magnet delivered on page** – see section 3.
 - **No cookie banner** – cookieless analytics instead; a banner on the first mobile screen would cost more conversions than it buys data.
 
-## 12. What's missing / before launching ads tomorrow
+## 13. What's missing / before launching ads tomorrow
 
 - **Operator identity** in the privacy notice and footer (company name, ID, contact) – required before running ads; I don't know who the advertiser is.
 - **Email delivery:** Resend works only with a verified sending domain; without it the email copy is skipped (the API returns `emailed: false`, and the form copy no longer promises an email copy – it is switched by whether `RESEND_*` is configured). One-click unsubscribe and a nurture sequence are not built; unsubscribing is by reply.
@@ -140,7 +156,7 @@ npm test && npm run lint && npm run build
 - Data is a snapshot (10 Oct 2026); a scheduled refresh from issuer pages isn't implemented.
 - `npm audit` reports a high-severity `postcss` advisory inside Next's own bundled copy (build-time only, not reachable at runtime); fixing it requires a Next major upgrade.
 
-## 13. How I worked with AI
+## 14. How I worked with AI
 
 The whole project was built in one Claude Code session (Claude Opus 5.5), exported to [`ai-log/`](ai-log/). I used no sub-agents: the task is sequential (data → model → UI → API → deploy) and a single agent with the full context made fewer consistency errors than parallel workers would.
 
