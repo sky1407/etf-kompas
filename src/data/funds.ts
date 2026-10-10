@@ -25,6 +25,7 @@ export type UcitsEtf = {
 export type UsEtf = {
   ticker: string;
   name: string;
+  label: string;
   exchange: "NYSE Arca";
   index: string;
   terPct: number;
@@ -142,6 +143,7 @@ export const ucitsEtfs: Record<string, UcitsEtf> = {
 export const usEtfs: UsEtf[] = [
   {
     ticker: "VOO",
+    label: "S&P 500",
     name: "Vanguard S&P 500 ETF",
     exchange: "NYSE Arca",
     index: "S&P 500",
@@ -156,6 +158,7 @@ export const usEtfs: UsEtf[] = [
   },
   {
     ticker: "SPY",
+    label: "S&P 500",
     name: "SPDR S&P 500 ETF Trust",
     exchange: "NYSE Arca",
     index: "S&P 500",
@@ -174,6 +177,7 @@ export const usEtfs: UsEtf[] = [
   },
   {
     ticker: "IVV",
+    label: "S&P 500",
     name: "iShares Core S&P 500 ETF",
     exchange: "NYSE Arca",
     index: "S&P 500",
@@ -188,6 +192,7 @@ export const usEtfs: UsEtf[] = [
   },
   {
     ticker: "VTI",
+    label: "celé USA",
     name: "Vanguard Total Stock Market ETF",
     exchange: "NYSE Arca",
     index: "Morningstar US Total Market",
@@ -199,6 +204,7 @@ export const usEtfs: UsEtf[] = [
   },
   {
     ticker: "VT",
+    label: "celý svět",
     name: "Vanguard Total World Stock ETF",
     exchange: "NYSE Arca",
     index: "FTSE Global All Cap",
@@ -213,6 +219,7 @@ export const usEtfs: UsEtf[] = [
   },
   {
     ticker: "SCHD",
+    label: "dividendy",
     name: "Schwab US Dividend Equity ETF",
     exchange: "NYSE Arca",
     index: "Dow Jones U.S. Dividend 100",
