@@ -5,6 +5,8 @@ import { ucitsEtfs, usEtfs } from "@/data/funds";
 import { initAnalytics, track } from "@/lib/analytics";
 import type { Utm, Variant } from "@/lib/variants";
 import { FeeCalculator } from "./FeeCalculator";
+import { LeadGate } from "./LeadGate";
+import { PlanReport } from "./PlanReport";
 import { TwinCard } from "./TwinCard";
 
 type Props = { variant: Variant; utm: Utm };
@@ -13,6 +15,7 @@ export function Explorer({ variant, utm }: Props) {
   const [ticker, setTicker] = useState(usEtfs[0].ticker);
   const [monthly, setMonthly] = useState(3000);
   const [years, setYears] = useState(20);
+  const [lead, setLead] = useState<{ emailed: boolean } | null>(null);
   const calculatorTouched = useRef(false);
   const viewTracked = useRef(false);
 
@@ -86,6 +89,14 @@ export function Explorer({ variant, utm }: Props) {
 
       <section id="nahrada" className="mt-6 scroll-mt-6" aria-live="polite">
         <TwinCard fund={fund} />
+        <a
+          href="#ziskat"
+          onClick={() => track("cta_clicked", { cta: "twin_card" })}
+          className="mt-3 flex items-center justify-between rounded-2xl border-2 border-ink px-5 py-4 font-bold"
+        >
+          Chci celý plán nákupu {fund.ticker} → {twin.ticker}
+          <span aria-hidden>↓</span>
+        </a>
       </section>
 
       <section id="kalkulacka" className="mt-10 scroll-mt-6">
@@ -95,6 +106,28 @@ export function Explorer({ variant, utm }: Props) {
         <div className="mt-4">
           <FeeCalculator twin={twin} monthly={monthly} years={years} onChange={changeCalculator} />
         </div>
+      </section>
+
+      <section id="ziskat" className="mt-10 scroll-mt-4">
+        {lead ? (
+          <PlanReport fund={fund} monthly={monthly} years={years} emailed={lead.emailed} />
+        ) : (
+          <LeadGate
+            usTicker={fund.ticker}
+            twinTicker={twin.ticker}
+            twinTerPct={twin.terPct}
+            monthly={monthly}
+            years={years}
+            variant={variant}
+            utm={utm}
+            onSuccess={(result) => {
+              setLead(result);
+              window.requestAnimationFrame(() =>
+                document.getElementById("plan")?.scrollIntoView({ behavior: "smooth", block: "start" }),
+              );
+            }}
+          />
+        )}
       </section>
     </>
   );
