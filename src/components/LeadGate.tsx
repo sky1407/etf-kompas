@@ -56,6 +56,12 @@ export function LeadGate({ usTicker, twinTicker, twinTerPct, monthly, years, var
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (status === "sending") return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) {
+      setError(ERRORS.invalid_email);
+      setStatus("error");
+      track("lead_failed", { reason: "client_invalid_email" });
+      return;
+    }
     setStatus("sending");
     setError("");
     track("lead_submitted", { us_ticker: usTicker, monthly, years });
@@ -99,17 +105,17 @@ export function LeadGate({ usTicker, twinTicker, twinTerPct, monthly, years, var
         </ul>
       </div>
 
-      <div aria-hidden className="relative mx-5 select-none rounded-t-2xl bg-paper/95 px-4 pt-4 text-ink sm:mx-7">
+      <div aria-hidden className="relative mx-5 select-none rounded-t-2xl bg-white px-4 pt-4 text-ink sm:mx-7">
         <div className="num space-y-2 text-sm blur-[3px]">
           <div className="flex justify-between"><span>Rok 5</span><span>{formatCzk(futureValue({ monthlyCzk: monthly, years: 5, annualCostPct: twinTerPct }))}</span></div>
           <div className="flex justify-between"><span>Rok 10</span><span>{formatCzk(futureValue({ monthlyCzk: monthly, years: 10, annualCostPct: twinTerPct }))}</span></div>
           <div className="flex justify-between"><span>ISIN</span><span>IE00•••••••••</span></div>
           <div className="flex justify-between"><span>Burza</span><span>Xetra / LSE</span></div>
         </div>
-        <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-paper to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white to-transparent" />
       </div>
 
-      <form onSubmit={submit} className="bg-paper p-5 text-ink sm:p-7" noValidate>
+      <form onSubmit={submit} className="relative bg-white p-5 text-ink sm:p-7" noValidate>
         <label htmlFor="email" className="text-sm font-semibold">
           Kam vám pošleme kopii?
         </label>
@@ -133,7 +139,7 @@ export function LeadGate({ usTicker, twinTicker, twinTerPct, monthly, years, var
             }}
             aria-invalid={status === "error"}
             aria-describedby="lead-note"
-            className="min-h-14 w-full rounded-2xl border-2 border-line bg-white px-4 text-lg outline-none focus:border-pine"
+            className="min-h-14 w-full rounded-2xl border-2 border-line bg-paper/40 px-4 text-lg outline-none focus:border-pine"
           />
           <button
             type="submit"

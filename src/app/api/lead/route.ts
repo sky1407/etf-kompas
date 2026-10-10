@@ -17,12 +17,6 @@ function hashIp(request: NextRequest): string | null {
 }
 
 export async function POST(request: NextRequest) {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    console.error("DATABASE_URL is not set");
-    return NextResponse.json({ ok: false, error: "unavailable" }, { status: 503 });
-  }
-
   const raw = await request.text();
   if (raw.length > MAX_BODY_BYTES) {
     return NextResponse.json({ ok: false, error: "too_large" }, { status: 413 });
@@ -44,6 +38,12 @@ export async function POST(request: NextRequest) {
 
   if (lead.website) {
     return NextResponse.json({ ok: true, emailed: false });
+  }
+
+  const databaseUrl = process.env.DATABASE_URL;
+  if (!databaseUrl) {
+    console.error("DATABASE_URL is not set");
+    return NextResponse.json({ ok: false, error: "unavailable" }, { status: 503 });
   }
 
   const sql = neon(databaseUrl);

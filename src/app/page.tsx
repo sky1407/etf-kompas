@@ -46,7 +46,7 @@ const hero: Record<Variant, { eyebrow: string; title: React.ReactNode; lead: str
     eyebrow: "Při 3 000 Kč měsíčně na 20 let",
     title: (
       <>
-        <span className="num text-signal">{formatCzk(heroGap)}</span> zaplatíte navíc ve fondu z banky.
+        O <span className="num text-signal">{formatCzk(heroGap)}</span> přijdete ve fondu z banky.
       </>
     ),
     lead: `Stejný index S&P 500 stojí v ETF ${formatPct(ucitsEtfs.cspx.terPct)} ročně místo průměrných ${formatPct(bankFundBenchmark.totalPct)}. Vyberte fond a spočítejte si to na svých číslech.`,
