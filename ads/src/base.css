@@ -1,0 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@600&display=block");
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1350px; }
+body { font-family: "Bricolage Grotesque", sans-serif; background: #f3eee4; color: #0f1f1a; padding: 84px; display: flex; flex-direction: column; }
+.brand { font-weight: 800; font-size: 40px; letter-spacing: -0.02em; }
+.brand b { color: #ff4f2e; }
+.mono { font-family: "IBM Plex Mono", monospace; letter-spacing: -0.03em; }
+.cta { margin-top: auto; display: flex; justify-content: space-between; align-items: center; background: #0f1f1a; color: #f3eee4; border-radius: 36px; padding: 40px 48px; font-size: 44px; font-weight: 800; }
+.cta span { color: #b9efc9; }
+.note { margin-top: 22px; font-size: 22px; color: #5b6863; }
