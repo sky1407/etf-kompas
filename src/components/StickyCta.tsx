@@ -7,22 +7,29 @@ export function StickyCta() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const twin = document.getElementById("nahrada");
-    const gate = document.getElementById("ziskat");
-    if (!twin || !gate || typeof IntersectionObserver === "undefined") return;
-    let pastTwin = false;
-    let gateInView = false;
-    const update = () => setVisible(pastTwin && !gateInView);
-    const observer = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.target === twin) pastTwin = !entry.isIntersecting && entry.boundingClientRect.top < 0;
-        if (entry.target === gate) gateInView = entry.isIntersecting || entry.boundingClientRect.top < 0;
-      }
-      update();
-    });
-    observer.observe(twin);
-    observer.observe(gate);
-    return () => observer.disconnect();
+    let frame = 0;
+    function update() {
+      frame = 0;
+      const twin = document.getElementById("nahrada");
+      const gate = document.getElementById("ziskat");
+      if (!twin || !gate) return;
+      const pastTwin = twin.getBoundingClientRect().bottom < 0;
+      const gateRect = gate.getBoundingClientRect();
+      const gateOnScreen = gateRect.top < window.innerHeight * 0.85 && gateRect.bottom > 0;
+      const planShown = document.getElementById("plan") !== null;
+      setVisible(pastTwin && !gateOnScreen && !planShown);
+    }
+    function onScroll() {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    }
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
   }, []);
 
   return (

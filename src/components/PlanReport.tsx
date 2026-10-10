@@ -52,31 +52,23 @@ export function PlanReport({ fund, monthly, years, emailed }: Props) {
       </div>
 
       <h3 className="mt-8 text-lg font-bold">1. Co koupit místo {fund.ticker}</h3>
-      <div className="mt-3 overflow-x-auto">
-        <table className="w-full min-w-[420px] text-left text-sm">
-          <thead className="text-muted">
-            <tr>
-              <th className="py-2 pr-3 font-normal">Fond</th>
-              <th className="py-2 pr-3 font-normal">ISIN</th>
-              <th className="py-2 pr-3 font-normal">Poplatek</th>
-              <th className="py-2 font-normal">Burza (ticker)</th>
-            </tr>
-          </thead>
-          <tbody className="num">
-            {fund.twins.map(({ id }) => {
-              const t = ucitsEtfs[id];
-              return (
-                <tr key={id} className="border-t border-line">
-                  <td className="py-2 pr-3 font-semibold">{t.ticker}</td>
-                  <td className="py-2 pr-3">{t.isin}</td>
-                  <td className="py-2 pr-3">{formatPct(t.terPct)}</td>
-                  <td className="py-2">Xetra {t.ticker} · LSE {t.lseTicker}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <ul className="mt-3 divide-y divide-line border-y border-line">
+        {fund.twins.map(({ id }) => {
+          const t = ucitsEtfs[id];
+          return (
+            <li key={id} className="py-3 text-sm">
+              <p className="flex justify-between gap-3">
+                <span className="num text-base font-semibold">{t.ticker}</span>
+                <span className="num">{formatPct(t.terPct)} ročně</span>
+              </p>
+              <p className="num mt-1 text-ink/80">ISIN {t.isin}</p>
+              <p className="mt-0.5 text-muted">
+                Xetra <span className="num">{t.ticker}</span> (EUR) · LSE <span className="num">{t.lseTicker}</span> (USD)
+              </p>
+            </li>
+          );
+        })}
+      </ul>
       {fund.twins[0].match === "similar" && (
         <p className="mt-2 text-sm text-muted">
           {fund.ticker} sleduje index {fund.index}, který v evropské verzi neexistuje. {twin.ticker} sleduje {twin.index} – je
@@ -87,33 +79,32 @@ export function PlanReport({ fund, monthly, years, emailed }: Props) {
       <h3 className="mt-8 text-lg font-bold">
         2. Vaše investice: <span className="num">{formatCzk(monthly)}</span> měsíčně
       </h3>
-      <div className="mt-3 overflow-x-auto">
-        <table className="num w-full min-w-[420px] text-left text-sm">
-          <thead className="font-sans text-muted">
-            <tr>
-              <th className="py-2 pr-3 font-normal">Rok</th>
-              <th className="py-2 pr-3 font-normal">Vloženo</th>
-              <th className="py-2 pr-3 font-normal">{twin.ticker}</th>
-              <th className="py-2 pr-3 font-normal">Fond z banky</th>
-              <th className="py-2 font-normal">Rozdíl</th>
-            </tr>
-          </thead>
-          <tbody>
-            {milestones(years).map((y) => {
-              const r = feeGap(monthly, y, twin.terPct, bankFundBenchmark.totalPct);
-              return (
-                <tr key={y} className="border-t border-line">
-                  <td className="py-2 pr-3">{y}</td>
-                  <td className="py-2 pr-3">{formatCzk(r.contributed)}</td>
-                  <td className="py-2 pr-3 font-semibold">{formatCzk(r.cheap)}</td>
-                  <td className="py-2 pr-3">{formatCzk(r.expensive)}</td>
-                  <td className="py-2 font-semibold text-signal">{formatCzk(r.gap)}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <table className="num mt-3 w-full text-left text-xs sm:text-sm">
+        <thead className="font-sans text-muted">
+          <tr>
+            <th className="py-2 pr-2 font-normal">Rok</th>
+            <th className="py-2 pr-2 text-right font-normal">{twin.ticker}</th>
+            <th className="py-2 pr-2 text-right font-normal">Banka</th>
+            <th className="py-2 text-right font-normal">Rozdíl</th>
+          </tr>
+        </thead>
+        <tbody>
+          {milestones(years).map((y) => {
+            const r = feeGap(monthly, y, twin.terPct, bankFundBenchmark.totalPct);
+            return (
+              <tr key={y} className="border-t border-line align-top">
+                <td className="py-2 pr-2">
+                  {y}
+                  <span className="block font-sans text-[11px] text-muted">vloženo {formatCzk(r.contributed)}</span>
+                </td>
+                <td className="whitespace-nowrap py-2 pr-2 text-right font-semibold">{formatCzk(r.cheap)}</td>
+                <td className="whitespace-nowrap py-2 pr-2 text-right">{formatCzk(r.expensive)}</td>
+                <td className="whitespace-nowrap py-2 text-right font-semibold text-signal">{formatCzk(r.gap)}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
       <p className="mt-2 text-xs text-muted">
         Model s hrubým výnosem 7 % ročně, náklady fondu z banky {formatPct(bankFundBenchmark.totalPct)} ročně (
         <a href={bankFundBenchmark.source.url} target="_blank" rel="noopener noreferrer" className="underline">
@@ -169,33 +160,31 @@ export function PlanReport({ fund, monthly, years, emailed }: Props) {
       </p>
 
       <h3 className="mt-8 text-lg font-bold">5. Všech 6 amerických ETF a jejich evropské verze</h3>
-      <div className="mt-3 overflow-x-auto">
-        <table className="w-full min-w-[420px] text-left text-sm">
-          <thead className="text-muted">
-            <tr>
-              <th className="py-2 pr-3 font-normal">NYSE</th>
-              <th className="py-2 pr-3 font-normal">Poplatek</th>
-              <th className="py-2 pr-3 font-normal">Evropská verze</th>
-              <th className="py-2 pr-3 font-normal">Poplatek</th>
-              <th className="py-2 font-normal">Index</th>
-            </tr>
-          </thead>
-          <tbody>
-            {usEtfs.map((f) => {
-              const t = ucitsEtfs[f.twins[0].id];
-              return (
-                <tr key={f.ticker} className="border-t border-line">
-                  <td className="num py-2 pr-3 font-semibold">{f.ticker}</td>
-                  <td className="num py-2 pr-3">{formatPct(f.terPct)}</td>
-                  <td className="num py-2 pr-3 font-semibold">{t.ticker}</td>
-                  <td className="num py-2 pr-3">{formatPct(t.terPct)}</td>
-                  <td className="py-2">{f.twins[0].match === "same-index" ? "stejný" : "podobný"}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <table className="mt-3 w-full text-left text-sm">
+        <thead className="text-muted">
+          <tr>
+            <th className="py-2 pr-2 font-normal">NYSE</th>
+            <th className="py-2 pr-2 font-normal">Evropská verze</th>
+            <th className="py-2 font-normal">Index</th>
+          </tr>
+        </thead>
+        <tbody>
+          {usEtfs.map((f) => {
+            const t = ucitsEtfs[f.twins[0].id];
+            return (
+              <tr key={f.ticker} className="border-t border-line">
+                <td className="num py-2 pr-2">
+                  <span className="font-semibold">{f.ticker}</span> {formatPct(f.terPct)}
+                </td>
+                <td className="num py-2 pr-2">
+                  <span className="font-semibold">{t.ticker}</span> {formatPct(t.terPct)}
+                </td>
+                <td className="py-2">{f.twins[0].match === "same-index" ? "stejný" : "podobný"}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
       <p className="mt-4 text-xs text-muted">
         Data k 10. 10. 2026 z justETF, StockAnalysis a State Street. ETF Kompas není broker ani investiční poradce a nic
         neprodává. Investice nese riziko ztráty.
