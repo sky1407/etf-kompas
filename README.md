@@ -165,3 +165,4 @@ The whole project was built in one Claude Code session (Claude Opus 5.5), export
 7. **Contrast** – the brand orange `#ff4f2e` failed WCAG AA (2.8:1); Lighthouse caught it, darkened to `#d4381a` (4.8:1 with white).
 8. **Mobile tables** – the first version of the plan used 5-column tables that overflowed at 390 px, and the sticky CTA stayed visible over the delivered plan; both found on screenshots and fixed.
 9. **Facts from memory** – the first fund shortlist was drafted from model knowledge and included QQQ, which trades on Nasdaq, not NYSE. Caught before data collection; from then on every value was fetched from a source instead of recalled.
+10. **Promises the product didn't keep** – the form said "kopii pošleme e-mailem" and "odhlásíte se jedním klikem" while no email provider or unsubscribe link existed. Found during the final copy review; the email line now depends on the actual configuration and the unsubscribe line says what is true.
