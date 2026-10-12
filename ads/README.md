@@ -12,7 +12,7 @@ Both ads land on the same page; the `ad` query parameter switches the hero so th
 | Headline | O 283 000 Kč přijdete ve fondu z banky |
 | Description | Kalkulačka poplatků v korunách + plán nákupu ETF |
 | CTA button | Zjistit více |
-| URL | `https://<domain>/?ad=fees&utm_source=meta&utm_medium=paid_social&utm_campaign=etf_kompas&utm_content=a_fees` |
+| URL | `https://etf-kompas.vercel.app/?ad=fees&utm_source=meta&utm_medium=paid_social&utm_campaign=etf_kompas&utm_content=a_fees` |
 
 Audience: CZ, 25–44, interests in investing / XTB / Trading 212 / Revolut / personal finance; placements: Instagram + Facebook feed and Stories.
 
@@ -26,7 +26,7 @@ Audience: CZ, 25–44, interests in investing / XTB / Trading 212 / Revolut / pe
 | Headline | VOO z Česka nekoupíte. Tohle ano. |
 | Description | 6 amerických ETF a jejich evropské náhrady |
 | CTA button | Zjistit více |
-| URL | `https://<domain>/?ad=voo&utm_source=meta&utm_medium=paid_social&utm_campaign=etf_kompas&utm_content=b_voo` |
+| URL | `https://etf-kompas.vercel.app/?ad=voo&utm_source=meta&utm_medium=paid_social&utm_campaign=etf_kompas&utm_content=b_voo` |
 
 Audience: same as A, plus interest "Exchange-traded fund" / "Vanguard" / "S&P 500" (people who already know the tickers).
 
